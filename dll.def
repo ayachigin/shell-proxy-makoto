@@ -1,0 +1,6 @@
+LIBRARY         MAKOTO
+DESCRIPTION     'My DLL written in D'
+
+EXETYPE		NT
+CODE            PRELOAD DISCARDABLE
+DATA            WRITE
