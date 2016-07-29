@@ -8,10 +8,17 @@ import std.c.windows.windows: HGLOBAL, GlobalFree;
 import std.windows.charset;
 import std.stdio;
 
+string working_directory;
+
 alias Tuple!(string, "command",
              string, "charset",
              string, "str",
              string, "sender") Request;
+
+string execute(string req) {
+
+    return "!!!" ~ req;
+}
 
 Request parseRequest(string input)
 {

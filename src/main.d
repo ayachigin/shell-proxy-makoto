@@ -9,9 +9,10 @@ import std.regex;
 import std.typecons;
 import std.windows.charset;
 
-import makoto: Request, Response, parseRequest, fromMBS;
+import makoto: Request, Response, parseRequest, fromMBS, execute;
 
 string working_directory;
+__gshared HINSTANCE g_hInst;
 
 // dll作るときの定型文
 version(Windows) extern(Windows) bool DllMain(void* hInstance,
@@ -22,6 +23,7 @@ version(Windows) extern(Windows) bool DllMain(void* hInstance,
     {
     default: assert(0);
     case DLL_PROCESS_ATTACH:
+        g_hInst = hInstance;
         dll_process_attach( hInstance, true );
         break;
 
@@ -64,8 +66,7 @@ extern(C) {
         auto request = parseRequest(fromMBS(h));
         GlobalFree(h);
         string res;
-
-        res = to!string(new Response(request.str));
+        res = to!string(new Response(execute(request.str)));
 
         auto len = res.length;
         h = LocalAlloc(0, len+1);
