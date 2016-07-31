@@ -9,9 +9,10 @@ import std.regex;
 import std.typecons;
 import std.windows.charset;
 
-import makoto: Request, Response, parseRequest, fromMBS, execute;
+import makoto;//: Request, Response, parseRequest, fromMBS, execute;
 
-string working_directory;
+__gshared ReplaceList replace_list[];
+__gshared string working_directory;
 __gshared HINSTANCE g_hInst;
 
 // dll作るときの定型文
@@ -49,8 +50,12 @@ extern(C) {
     export bool load(HGLOBAL h, long n)
     {
         auto input = to!string(cast(char*)h);
-        working_directory = input;
+        if (working_directory == "") {
+            working_directory = input;
+        }
         GlobalFree(h);
+
+        replace_list = loadReplaceList(working_directory);
         return true;
     }
 
@@ -66,7 +71,11 @@ extern(C) {
         auto request = parseRequest(fromMBS(h));
         GlobalFree(h);
         string res;
-        res = to!string(new Response(execute(request.str)));
+
+        res = to!string(new Response(
+                            execute(request.str,
+                                    replace_list,
+                                    working_directory)));
 
         auto len = res.length;
         h = LocalAlloc(0, len+1);
