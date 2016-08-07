@@ -24,7 +24,7 @@ string execute(string reqStr, ReplaceList ls[], string wd)
     {
         auto pat   = reg.pattern;
         string to_ = reg.toStr;
-        reqStr     = reqStr.replace("hoge", to_);
+        reqStr     = reqStr.replaceAll(pat, to_);
     }
 
     return reqStr;
@@ -107,9 +107,7 @@ ReplaceList[] loadReplaceList(string wd)
     {
         if (l == "") break;
         auto words = (to!string(l)).split(" ");
-        auto t = ReplaceList(regex(words[0]), words[1]);
-
-        ls ~= t;
+        ls ~= ReplaceList(regex(words[0]), words[1]);
     }
     return ls;
 }
